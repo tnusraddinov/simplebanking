@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 // This class is a place holder you can change the complete implementation
 @Entity
-@Table(name = "deposit_transactions")
+@Table(name = "deposit_transaction")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class DepositTransaction extends Transaction {
 

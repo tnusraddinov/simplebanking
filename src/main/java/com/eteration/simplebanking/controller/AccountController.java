@@ -63,4 +63,22 @@ public class AccountController {
         }
         return ResponseEntity.notFound().build();
 	}
+
+    @PostMapping(path = "phone_bill/{accountNumber}")
+    public ResponseEntity phoneBill(
+            @PathVariable("accountNumber") String accountNumber,
+            @RequestBody PhoneBillPaymentTransaction transaction
+    ) {
+
+        TransactionStatus transactionStatus = null;
+        try {
+            transactionStatus = accountService.phoneBill(accountNumber, transaction);
+        } catch (InsufficientBalanceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        if(transactionStatus != null){
+            return ResponseEntity.ok(transactionStatus);
+        }
+        return ResponseEntity.notFound().build();
+    }
 }
