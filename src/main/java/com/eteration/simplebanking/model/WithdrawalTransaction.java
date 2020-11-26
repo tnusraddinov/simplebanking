@@ -16,7 +16,10 @@ public class WithdrawalTransaction extends Transaction {
         super(amount.doubleValue());
     }
 
-
+    public void apply(Account account) throws InsufficientBalanceException {
+        account.withdraw(this.getAmount());
+        account.getTransactions().add(this);
+    }
 }
 
 

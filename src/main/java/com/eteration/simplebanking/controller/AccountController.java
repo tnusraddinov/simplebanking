@@ -36,12 +36,13 @@ public class AccountController {
 
     @PostMapping(path = "credit/{accountNumber}")
     public ResponseEntity credit( @PathVariable("accountNumber") String accountNumber,
-            @RequestBody DepositTransaction depositTransaction
+            @RequestBody DepositTransaction transaction
             ) {
         Account account = accountService.findAccount(accountNumber);
         if(account != null){
-            account.post(depositTransaction);
-            return ResponseEntity.ok(new TransactionStatus("OK", UUID.randomUUID().toString()));
+//            account.post(transaction);
+            transaction.apply(account);
+            return ResponseEntity.ok(new TransactionStatus("OK", transaction.getApprovalCode()));
         }
         return ResponseEntity.notFound().build();
     }
@@ -49,18 +50,19 @@ public class AccountController {
     @PostMapping(path = "debit/{accountNumber}")
     public ResponseEntity debit(
             @PathVariable("accountNumber") String accountNumber,
-            @RequestBody WithdrawalTransaction withdrawalTransaction
+            @RequestBody WithdrawalTransaction transaction
             ) {
         Account account = accountService.findAccount(accountNumber);
         if(account != null){
 
             try {
-                account.post(withdrawalTransaction);
+//                account.post(transaction);
+                transaction.apply(account);
             } catch (InsufficientBalanceException e) {
                 return ResponseEntity.badRequest().body(e.getMessage());
             }
 
-            return ResponseEntity.ok(new TransactionStatus("OK", UUID.randomUUID().toString()));
+            return ResponseEntity.ok(new TransactionStatus("OK", transaction.getApprovalCode()));
         }
         return ResponseEntity.notFound().build();
 	}

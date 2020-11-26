@@ -2,20 +2,24 @@ package com.eteration.simplebanking.model;
 
 
 import java.time.Instant;
+import java.util.UUID;
 
 // This class is a place holder you can change the complete implementation
 public abstract class Transaction {
 	private Instant date;
 	private Double amount;
 	private String type;
+    private String approvalCode;
 
     public Transaction() {
+        this.type = this.getClass().getSimpleName();
         this.date = Instant.now();
         this.amount = 0.0;
+        this.approvalCode = UUID.randomUUID().toString();
     }
 
     public Transaction(Double amount) {
-        this.date = Instant.now();
+        this();
         this.amount = amount;
     }
 
@@ -32,7 +36,11 @@ public abstract class Transaction {
     }
 
     public String getType() {
-        return this.getClass().getSimpleName();
+        return type;
+    }
+
+    public String getApprovalCode() {
+        return approvalCode;
     }
 
     @Override

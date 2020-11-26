@@ -58,11 +58,7 @@ public class Account {
         }
     }
     public void withdraw(Integer amount) throws InsufficientBalanceException {
-        if(this.balance >= amount) {
-            this.balance -= amount.doubleValue();
-        } else {
-            throw new InsufficientBalanceException("Insufficient Balance");
-        }
+        this.withdraw(amount.doubleValue());
     }
 
     public void post(DepositTransaction transaction){

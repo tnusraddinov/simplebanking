@@ -14,4 +14,9 @@ public class DepositTransaction extends Transaction {
     public DepositTransaction(Integer amount) {
         super(amount.doubleValue());
     }
+
+    public void apply(Account account) {
+        account.deposit(this.getAmount());
+        account.getTransactions().add(this);
+    }
 }
