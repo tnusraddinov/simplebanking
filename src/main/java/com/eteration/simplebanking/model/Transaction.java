@@ -1,19 +1,46 @@
 package com.eteration.simplebanking.model;
 
 
+import org.hibernate.annotations.CreationTimestamp;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.Instant;
+import java.util.Date;
 import java.util.UUID;
 
 // This class is a place holder you can change the complete implementation
+//@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+//@MappedSuperclass
+@Entity
+@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 public abstract class Transaction {
-	private Instant date;
-	private Double amount;
-	private String type;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "transaction_id")
+    private Long transactionId;
+
+    @CreationTimestamp
+    @Temporal( TemporalType.TIMESTAMP )
+    private Date date;
+
+    @NotNull
+    private Double amount;
+
+    @NotNull
+    private String type;
+
+    @NotNull
     private String approvalCode;
+
+    @ManyToOne
+    @JoinColumn(name="account_id", nullable=false)
+    private Account account;
 
     public Transaction() {
         this.type = this.getClass().getSimpleName();
-        this.date = Instant.now();
+        this.date = new Date();
         this.amount = 0.0;
         this.approvalCode = UUID.randomUUID().toString();
     }
@@ -23,7 +50,7 @@ public abstract class Transaction {
         this.amount = amount;
     }
 
-    public Instant getDate() {
+    public Date getDate() {
         return date;
     }
 
@@ -41,6 +68,10 @@ public abstract class Transaction {
 
     public String getApprovalCode() {
         return approvalCode;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     @Override

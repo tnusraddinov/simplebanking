@@ -4,6 +4,7 @@ import com.eteration.simplebanking.model.*;
 import com.eteration.simplebanking.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,11 +39,9 @@ public class AccountController {
     public ResponseEntity credit( @PathVariable("accountNumber") String accountNumber,
             @RequestBody DepositTransaction transaction
             ) {
-        Account account = accountService.findAccount(accountNumber);
-        if(account != null){
-//            account.post(transaction);
-            transaction.apply(account);
-            return ResponseEntity.ok(new TransactionStatus("OK", transaction.getApprovalCode()));
+        TransactionStatus transactionStatus = accountService.credit(accountNumber, transaction);
+        if(transactionStatus != null){
+            return ResponseEntity.ok(transactionStatus);
         }
         return ResponseEntity.notFound().build();
     }
@@ -52,17 +51,15 @@ public class AccountController {
             @PathVariable("accountNumber") String accountNumber,
             @RequestBody WithdrawalTransaction transaction
             ) {
-        Account account = accountService.findAccount(accountNumber);
-        if(account != null){
 
-            try {
-//                account.post(transaction);
-                transaction.apply(account);
-            } catch (InsufficientBalanceException e) {
-                return ResponseEntity.badRequest().body(e.getMessage());
-            }
-
-            return ResponseEntity.ok(new TransactionStatus("OK", transaction.getApprovalCode()));
+        TransactionStatus transactionStatus = null;
+        try {
+            transactionStatus = accountService.debit(accountNumber, transaction);
+        } catch (InsufficientBalanceException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        if(transactionStatus != null){
+            return ResponseEntity.ok(transactionStatus);
         }
         return ResponseEntity.notFound().build();
 	}

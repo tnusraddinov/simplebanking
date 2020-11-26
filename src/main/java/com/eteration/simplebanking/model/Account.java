@@ -3,23 +3,54 @@ package com.eteration.simplebanking.model;
 
 // This class is a place holder you can change the complete implementation
 
+import org.hibernate.annotations.CreationTimestamp;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+@Entity
+@Table(name = "accounts")
 public class Account {
-    private Instant createDate;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "account_id")
+    private Long accountId;
+
+    @CreationTimestamp
+    @Temporal( TemporalType.TIMESTAMP )
+    @Column(name = "create_date")
+    private Date createDate;
+
+    @NotNull
     private String owner;
+
+    @NotNull
+    @Column(name = "account_number")
     private String accountNumber;
+
+    @NotNull
     private Double balance;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<Transaction> transactions;
 
-    public Account(String owner, String accountNumber) {
-        this.createDate = Instant.now();
-        this.owner = owner;
-        this.accountNumber = accountNumber;
+    public Account() {
+        this.createDate = new Date();
+        this.owner = "";
+        this.accountNumber = "";
         this.balance = 0.0;
         this.transactions = new ArrayList<>();
+    }
+
+    public Account(String owner, String accountNumber) {
+        this();
+        this.owner = owner;
+        this.accountNumber = accountNumber;
     }
 
     public String getOwner() {
@@ -34,7 +65,7 @@ public class Account {
         return balance;
     }
 
-    public Instant getCreateDate() {
+    public Date getCreateDate() {
         return createDate;
     }
 
