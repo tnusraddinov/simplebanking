@@ -1,9 +1,6 @@
 package com.eteration.simplebanking.controller;
 
-import com.eteration.simplebanking.model.Account;
-import com.eteration.simplebanking.model.DepositTransaction;
-import com.eteration.simplebanking.model.InsufficientBalanceException;
-import com.eteration.simplebanking.model.WithdrawalTransaction;
+import com.eteration.simplebanking.model.*;
 import com.eteration.simplebanking.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
@@ -38,16 +35,14 @@ public class AccountController {
     }
 
     @PostMapping(path = "credit/{accountNumber}")
-    public ResponseEntity credit(
-            @PathVariable("accountNumber") String accountNumber,
-            @RequestBody MyTr myTr
-//                HttpRequest httpRequest
+    public ResponseEntity credit( @PathVariable("accountNumber") String accountNumber,
+            @RequestBody DepositTransaction depositTransaction
             ) {
         Account account = accountService.findAccount(accountNumber);
-//        if(account != null){
-//            account.post(depositTransaction);
-//            return ResponseEntity.ok(new TransactionStatus("OK", UUID.randomUUID().toString()));
-//        }
+        if(account != null){
+            account.post(depositTransaction);
+            return ResponseEntity.ok(new TransactionStatus("OK", UUID.randomUUID().toString()));
+        }
         return ResponseEntity.notFound().build();
     }
 
@@ -55,35 +50,18 @@ public class AccountController {
     public ResponseEntity debit(
             @PathVariable("accountNumber") String accountNumber,
             @RequestBody WithdrawalTransaction withdrawalTransaction
-            ) throws InsufficientBalanceException {
+            ) {
         Account account = accountService.findAccount(accountNumber);
         if(account != null){
-            account.post(withdrawalTransaction);
+
+            try {
+                account.post(withdrawalTransaction);
+            } catch (InsufficientBalanceException e) {
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
+
             return ResponseEntity.ok(new TransactionStatus("OK", UUID.randomUUID().toString()));
         }
         return ResponseEntity.notFound().build();
 	}
-}
-
-class MyTr{
-    private Double amount;
-
-    public MyTr(Double amount) {
-        this.amount = amount;
-    }
-
-    public Double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Double amount) {
-        this.amount = amount;
-    }
-
-    @Override
-    public String toString() {
-        return "Transaction{" +
-                ", amount=" + amount +
-                '}';
-    }
 }
