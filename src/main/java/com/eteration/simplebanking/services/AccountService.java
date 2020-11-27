@@ -41,15 +41,23 @@ public class AccountService {
         return account;
     }
 
+    public Account credit2(String accountNumber, DepositTransaction transaction) {
+        Account account = accountRepository.findByAccountNumber(accountNumber);
+        account.deposit(1000);
+        return account;
+    }
     public TransactionStatus credit(String accountNumber, DepositTransaction transaction) {
         Account account = accountRepository.findByAccountNumber(accountNumber);
-        if(account != null){
-//            account.post(transaction);
-            transaction.apply(account);
-            depositTransactionRepository.save(transaction);
-            return new TransactionStatus("OK", transaction.getApprovalCode());
-        }
-        return null;
+        account.post(transaction);
+        return new TransactionStatus("OK", transaction.getApprovalCode());
+
+        //        if(account != null){
+////            account.post(transaction);
+//            transaction.apply(account);
+//            depositTransactionRepository.save(transaction);
+//            return new TransactionStatus("OK", transaction.getApprovalCode());
+//        }
+//        return null;
     }
 
     public TransactionStatus debit (String accountNumber, WithdrawalTransaction transaction) throws InsufficientBalanceException {

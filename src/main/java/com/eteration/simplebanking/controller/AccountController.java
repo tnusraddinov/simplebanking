@@ -35,15 +35,29 @@ public class AccountController {
         return ResponseEntity.notFound().build();
     }
 
+    @PostMapping(path = "credit2/{accountNumber}")
+    public ResponseEntity<Account> credit2(@PathVariable("accountNumber") String accountNumber, @RequestBody DepositTransaction transaction) {
+        Account account = accountService.findAccount(accountNumber);
+        Account account1 = accountService.credit2(accountNumber, transaction);
+        return ResponseEntity.ok(account);
+    }
+
     @PostMapping(path = "credit/{accountNumber}")
     public ResponseEntity credit( @PathVariable("accountNumber") String accountNumber,
             @RequestBody DepositTransaction transaction
             ) {
-        TransactionStatus transactionStatus = accountService.credit(accountNumber, transaction);
-        if(transactionStatus != null){
-            return ResponseEntity.ok(transactionStatus);
-        }
-        return ResponseEntity.notFound().build();
+//        Account account = accountService.findAccount(accountNumber);
+//        transaction.apply(account);
+//        return ResponseEntity.ok(new TransactionStatus("OK", transaction.getApprovalCode()));
+
+        TransactionStatus status = accountService.credit(accountNumber, transaction);
+        ResponseEntity res = ResponseEntity.ok(status);
+        return res;
+
+//        if(transactionStatus != null){
+//            return ResponseEntity.ok(transactionStatus);
+//        }
+//        return ResponseEntity.notFound().build();
     }
 
     @PostMapping(path = "debit/{accountNumber}")
@@ -51,7 +65,6 @@ public class AccountController {
             @PathVariable("accountNumber") String accountNumber,
             @RequestBody WithdrawalTransaction transaction
             ) {
-
         TransactionStatus transactionStatus = null;
         try {
             transactionStatus = accountService.debit(accountNumber, transaction);
@@ -81,4 +94,6 @@ public class AccountController {
         }
         return ResponseEntity.notFound().build();
     }
+
+
 }
