@@ -13,6 +13,7 @@ import javax.persistence.Table;
 public class DepositTransaction extends Transaction {
 
     public DepositTransaction() {
+        super();
     }
 
     public DepositTransaction(Double amount) {

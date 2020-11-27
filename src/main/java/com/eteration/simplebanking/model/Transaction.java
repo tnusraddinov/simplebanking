@@ -1,6 +1,7 @@
 package com.eteration.simplebanking.model;
 
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import java.util.UUID;
 //@MappedSuperclass
 @Entity
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY, property="@class")
 public abstract class Transaction {
 
     @Id

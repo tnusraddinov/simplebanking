@@ -14,6 +14,7 @@ import javax.persistence.Table;
 public class WithdrawalTransaction extends Transaction {
 
     public WithdrawalTransaction() {
+        super();
     }
 
     public WithdrawalTransaction(Double amount) {

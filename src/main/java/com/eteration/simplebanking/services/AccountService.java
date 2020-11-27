@@ -9,6 +9,7 @@ import com.eteration.simplebanking.repository.PhoneBillPaymentTransactionReposit
 import com.eteration.simplebanking.repository.WithdrawalTransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,10 +19,10 @@ import java.util.List;
 @Service
 public class AccountService {
 
-    AccountRepository accountRepository;
-    DepositTransactionRepository depositTransactionRepository;
-    WithdrawalTransactionRepository withdrawalTransactionRepository;
-    PhoneBillPaymentTransactionRepository phoneBillPaymentTransactionRepository;
+    private final AccountRepository accountRepository;
+    private final DepositTransactionRepository depositTransactionRepository;
+    private final WithdrawalTransactionRepository withdrawalTransactionRepository;
+    private final PhoneBillPaymentTransactionRepository phoneBillPaymentTransactionRepository;
 
     @Autowired
     public AccountService(
